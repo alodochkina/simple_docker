@@ -1,0 +1,14 @@
+FROM nginx:latest
+
+COPY ./nginx/nginx.conf ./etc/nginx/
+COPY ./server/hello.c ./home/
+COPY ./script.sh ./home/script.sh
+
+RUN apt update && apt install -y \
+  spawn-fcgi \
+  libfcgi-dev \
+  gcc \
+  && gcc ./home/hello.c -o ./home/hello -lfcgi \
+  && chmod +x ./home/script.sh
+
+ENTRYPOINT ["./home/script.sh"]
